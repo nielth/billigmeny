@@ -1,2 +1,5 @@
+__pycache__
 geckodriver.log
 .vscode
+items.db
+docker*

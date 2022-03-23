@@ -1,5 +1,4 @@
 import re
-import time
 
 from bs4 import BeautifulSoup
 from selenium import webdriver
@@ -8,7 +7,6 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support import expected_conditions as EC
 
-
 import db.db_ as db_
 
 url_fruit = "https://meny.no/varer/frukt-gront"
@@ -16,12 +14,10 @@ total_items_one_page = 42
 
 print("Test")
 
-chrome_options = webdriver.ChromeOptions()
-chrome_options.add_argument('--no-sandbox')
-chrome_options.add_argument('--window-size=1920,1080')
-chrome_options.add_argument('--headless')
-chrome_options.add_argument('--disable-gpu')
-driver = webdriver.Chrome(chrome_options=chrome_options)
+options = webdriver.FirefoxOptions()
+options.add_argument('--headless')
+driver = webdriver.Remote("http://selenium:4444/wd/hub", options=options)
+
 driver.get(url_fruit)
 
 wait = WebDriverWait(driver, 10)
@@ -35,8 +31,12 @@ results = wait.until(
     )
 )
 
+#screenshot = driver.save_screenshot('test.png')
+
+while not results.text:
+    pass
+
 # 'Show more' button pressed
-screenshot = driver.save_screenshot('test.png')
 pages = int((int(re.search(r"\d+", results.text).group()) // 42))
 for i in range(pages):
     loadMore.click()

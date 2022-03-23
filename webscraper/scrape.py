@@ -6,17 +6,19 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.firefox.options import Options
+from pyvirtualdisplay import Display
+from selenium import webdriver
 
 import db.db_ as db_
 
 url_fruit = "https://meny.no/varer/frukt-gront"
 total_items_one_page = 42
 
-options = Options()
-options.headless = True
+display = Display(visible=0, size=(800, 600))
+display.start()
 
-driver = webdriver.Firefox(options=options)
+driver = webdriver.Firefox()
+
 driver.get(url_fruit)
 
 wait = WebDriverWait(driver, 10)
@@ -25,7 +27,8 @@ loadMore = wait.until(
 )
 results = wait.until(
     EC.presence_of_element_located(
-        (By.XPATH, "/html/body/div[1]/div[4]/div/main/div/div/div[3]/div/div[1]/div[4]")
+        (By.XPATH,
+         "/html/body/div[1]/div[4]/div/main/div/div/div[3]/div/div[1]/div[4]")
     )
 )
 while not results.text:
@@ -123,8 +126,7 @@ for item in items:
     except TimeoutException:
         print("Ingen næringsinnhold")
         db_.add_item(
-            title=append_groceries["title"],
-            description=append_groceries["description"]
+            title=append_groceries["title"], description=append_groceries["description"]
         )
 
     try:

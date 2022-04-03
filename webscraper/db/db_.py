@@ -14,7 +14,10 @@ class Items(Base):
     __tablename__ = "items"
 
     id = Column(Integer, primary_key=True)
+    price = Column(String)
     title = Column(String)
+    section=Column(String)
+    subsection=Column(String)
     description = Column(String, nullable=True)
     energy = Column(String, nullable=True)
     calories = Column(String, nullable=True)
@@ -37,7 +40,10 @@ Base.metadata.create_all(engine)
 
 
 def add_item(
+    price="",
     title="",
+    section="",
+    subsection="",
     description="",
     energy="",
     calories="",
@@ -53,7 +59,10 @@ def add_item(
     salt="",
 ):
     db_items = Items(
+        price=price,
         title=title,
+        section=section,
+        subsection=subsection,
         description=description,
         energy=energy,
         calories=calories,

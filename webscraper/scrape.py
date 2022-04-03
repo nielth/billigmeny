@@ -16,7 +16,7 @@ options = webdriver.FirefoxOptions()
 
 # Docker lines
 # options.add_argument('--headless')
-#driver = webdriver.Remote("http://selenium:4444/wd/hub", options=options)
+# driver = webdriver.Remote("http://selenium:4444/wd/hub", options=options)
 
 # Debugging line
 driver = webdriver.Firefox(options=options)
@@ -26,12 +26,16 @@ def get_sections(driver):
     wait = WebDriverWait(driver, 10)
     sections = wait.until(
         EC.element_to_be_clickable(
-            (By.CSS_SELECTOR, "li.cw-categories__item.cw-categories__item--inactive a.cw-categories__title span.cw-categories__title__text"))
+            (
+                By.CSS_SELECTOR,
+                "li.cw-categories__item.cw-categories__item--inactive a.cw-categories__title span.cw-categories__title__text",
+            )
+        )
     )
 
     items = driver.find_elements(
-        By.CSS_SELECTOR, "li.cw-categories__item.cw-categories__item--inactive a.cw-categories__title span.cw-categories__title__text"
-
+        By.CSS_SELECTOR,
+        "li.cw-categories__item.cw-categories__item--inactive a.cw-categories__title span.cw-categories__title__text",
     )
     return items
 
@@ -40,12 +44,16 @@ def get_subsections(driver):
     wait = WebDriverWait(driver, 10)
     wait.until(
         EC.element_to_be_clickable(
-            (By.CSS_SELECTOR, "html.wsproductlistpage.webshoppage.pagetype--WSProductListPage.no-js body.notloggedin div.page div.cw-main-wrapper div.cw-split.cw-section div.cw-categories div#mobile_products_nav.cw-categories__body ul.cw-categories__list li.cw-categories__item.cw-categories__item--active ul.cw-categories__list li.cw-categories__item.cw-categories__item--inactive a.cw-categories__title span.cw-categories__title__text"))
+            (
+                By.CSS_SELECTOR,
+                "html.wsproductlistpage.webshoppage.pagetype--WSProductListPage.no-js body.notloggedin div.page div.cw-main-wrapper div.cw-split.cw-section div.cw-categories div#mobile_products_nav.cw-categories__body ul.cw-categories__list li.cw-categories__item.cw-categories__item--active ul.cw-categories__list li.cw-categories__item.cw-categories__item--inactive a.cw-categories__title span.cw-categories__title__text",
+            )
+        )
     )
 
     items = driver.find_elements(
-        By.CSS_SELECTOR, "html.wsproductlistpage.webshoppage.pagetype--WSProductListPage.no-js body.notloggedin div.page div.cw-main-wrapper div.cw-split.cw-section div.cw-categories div#mobile_products_nav.cw-categories__body ul.cw-categories__list li.cw-categories__item.cw-categories__item--active ul.cw-categories__list li.cw-categories__item.cw-categories__item--inactive a.cw-categories__title span.cw-categories__title__text"
-
+        By.CSS_SELECTOR,
+        "html.wsproductlistpage.webshoppage.pagetype--WSProductListPage.no-js body.notloggedin div.page div.cw-main-wrapper div.cw-split.cw-section div.cw-categories div#mobile_products_nav.cw-categories__body ul.cw-categories__list li.cw-categories__item.cw-categories__item--active ul.cw-categories__list li.cw-categories__item.cw-categories__item--inactive a.cw-categories__title span.cw-categories__title__text",
     )
     return items
 
@@ -54,19 +62,17 @@ def get_elements(section, subsection, driver):
     # Show more button found
     wait = WebDriverWait(driver, 10)
     loadMore = wait.until(
-        EC.presence_of_element_located(
-            (By.CLASS_NAME, "ws-product-view__footer"))
+        EC.presence_of_element_located((By.CLASS_NAME, "ws-product-view__footer"))
     )
 
     # Find total amount of products to calculate how many pages to laod
     results = wait.until(
         EC.presence_of_element_located(
-            (By.CSS_SELECTOR,
-             ".ws-product-filter__item.ws-product-filter__item--total")
+            (By.CSS_SELECTOR, ".ws-product-filter__item.ws-product-filter__item--total")
         )
     )
 
-    #screenshot = driver.save_screenshot('test.png')
+    # screenshot = driver.save_screenshot('test.png')
     while not results.text:
         pass
 
@@ -77,8 +83,8 @@ def get_elements(section, subsection, driver):
         print(i)
 
     items = driver.find_elements(
-        By.XPATH, "/html/body/div[1]/div[4]/div/main/div/div/div[3]/div/ul/li/div/div/h3/a"
-
+        By.XPATH,
+        "/html/body/div[1]/div[4]/div/main/div/div/div[3]/div/ul/li/div/div/h3/a",
     )
     count = 1
     for item in items:
@@ -129,7 +135,6 @@ def get_elements(section, subsection, driver):
         append_groceries["price"] = append_price
         append_groceries["title"] = item.text
         append_groceries["description"] = descritions.text
-
 
         try:
             # Open the nutrition list
@@ -185,7 +190,11 @@ def get_elements(section, subsection, driver):
         except TimeoutException:
             print("Ingen næringsinnhold")
             db_.add_item(
-                price=append_groceries["price"], title=append_groceries["title"], description=append_groceries["description"], section=section, subsection=subsection
+                price=append_groceries["price"],
+                title=append_groceries["title"],
+                description=append_groceries["description"],
+                section=section,
+                subsection=subsection,
             )
 
         try:
@@ -204,8 +213,13 @@ def get_elements(section, subsection, driver):
 
 def main():
     driver.get(url_fruit)
-    ignore_section = ['Ukemeny', 'Jacobs Utvalgte 3for2',
-                   'Faste Knallkjøp', 'Matskatter fra Norge', 'Handle til bedrift?']
+    ignore_section = [
+        "Ukemeny",
+        "Jacobs Utvalgte 3for2",
+        "Faste Knallkjøp",
+        "Matskatter fra Norge",
+        "Handle til bedrift?",
+    ]
     ignore_subsection = []
 
     subsections = None
@@ -238,6 +252,6 @@ def main():
             i += 1
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
     driver.close()
